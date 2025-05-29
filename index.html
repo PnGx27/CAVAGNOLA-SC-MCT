@@ -1,40 +1,37 @@
-
 <!DOCTYPE html>
 <html lang="it">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>CAVAGNOLA</title>
-  <link rel="stylesheet" href="style.css" />
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>CAVAGNOLA SC MCT</title>
+<link rel="stylesheet" href="style.css" />
 </head>
 <body>
   <div class="container">
-    <h1>CAVAGNOLA</h1>
-
-    <label for="classe">Classe</label>
-    <select id="classe">
-      <option value="">Seleziona classe</option>
-      <option value="Classe1">Classe1</option>
-      <option value="Classe2">Classe2</option>
-      <option value="Classe3">Classe3</option>
-      <option value="Classe4">Classe4</option>
-    </select>
-
-    <label for="tipo">Tipo di valore</label>
-    <select id="tipo">
-      <option value="">Seleziona tipo</option>
-      <option value="cntr">cntr CR</option>
-      <option value="prezzo">Prezzo</option>
-    </select>
-
-    <label for="valore">Valore</label>
-    <input type="number" id="valore" placeholder="Inserisci valore numerico" />
-
-    <button id="calcolaBtn">Calcola</button>
-
-    <pre id="output"></pre>
+    <h1>CAVAGNOLA SC MCT</h1>
+    <div class="form-group">
+      <label for="classe">Seleziona Classe:</label>
+      <select id="classe">
+        <option value="Classe1">Classe1</option>
+        <option value="Classe2">Classe2</option>
+        <option value="Classe3">Classe3</option>
+        <option value="Classe4">Classe4</option>
+      </select>
+    </div>
+    <div class="form-group">
+      <label for="tipo">Tipo di valore:</label>
+      <select id="tipo">
+        <option value="cntrCR">cntr CR</option>
+        <option value="prezzo">Prezzo (€)</option>
+      </select>
+    </div>
+    <div class="form-group">
+      <label for="valore">Inserisci valore:</label>
+      <input type="number" id="valore" min="0" />
+    </div>
+    <button id="calcola">Calcola</button>
+    <div id="output"></div>
   </div>
-
   <script src="script.js"></script>
 </body>
 </html>
