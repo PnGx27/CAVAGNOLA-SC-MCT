@@ -1,0 +1,40 @@
+
+<!DOCTYPE html>
+<html lang="it">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>CAVAGNOLA</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <div class="container">
+    <h1>CAVAGNOLA</h1>
+
+    <label for="classe">Classe</label>
+    <select id="classe">
+      <option value="">Seleziona classe</option>
+      <option value="Classe1">Classe1</option>
+      <option value="Classe2">Classe2</option>
+      <option value="Classe3">Classe3</option>
+      <option value="Classe4">Classe4</option>
+    </select>
+
+    <label for="tipo">Tipo di valore</label>
+    <select id="tipo">
+      <option value="">Seleziona tipo</option>
+      <option value="cntr">cntr CR</option>
+      <option value="prezzo">Prezzo</option>
+    </select>
+
+    <label for="valore">Valore</label>
+    <input type="number" id="valore" placeholder="Inserisci valore numerico" />
+
+    <button id="calcolaBtn">Calcola</button>
+
+    <pre id="output"></pre>
+  </div>
+
+  <script src="script.js"></script>
+</body>
+</html>
