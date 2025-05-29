@@ -3,35 +3,181 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>CAVAGNOLA SC MCT</title>
-<link rel="stylesheet" href="style.css" />
+<title>CAVAGNOLA MCT - Calcolo Prezzi</title>
+<style>
+  body {
+    background-color: #222; 
+    color: #f5a623; /* arancione dettagli */
+    font-family: Arial, sans-serif;
+    padding: 20px;
+  }
+  label, select, input {
+    display: block;
+    margin: 10px 0 5px;
+  }
+  input, select {
+    padding: 8px;
+    width: 100%;
+    max-width: 300px;
+    border: 2px solid #f5a623;
+    border-radius: 5px;
+    background: #333;
+    color: #f5a623;
+  }
+  button {
+    margin-top: 15px;
+    background-color: #d97115; /* arancio scuro */
+    color: #fff;
+    border: none;
+    padding: 12px 20px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-weight: bold;
+    max-width: 300px;
+  }
+  button:hover {
+    background-color: #f5a623; /* arancione chiaro */
+    color: #222;
+  }
+  #output {
+    margin-top: 20px;
+    white-space: pre-line;
+    font-size: 1.1em;
+    background: #333;
+    padding: 15px;
+    border-radius: 8px;
+    border: 1px solid #f5a623;
+    max-width: 350px;
+  }
+</style>
 </head>
 <body>
-  <div class="container">
-    <h1>CAVAGNOLA SC MCT</h1>
-    <div class="form-group">
-      <label for="classe">Seleziona Classe:</label>
-      <select id="classe">
-        <option value="Classe1">Classe1</option>
-        <option value="Classe2">Classe2</option>
-        <option value="Classe3">Classe3</option>
-        <option value="Classe4">Classe4</option>
-      </select>
-    </div>
-    <div class="form-group">
-      <label for="tipo">Tipo di valore:</label>
-      <select id="tipo">
-        <option value="cntrCR">cntr CR</option>
-        <option value="prezzo">Prezzo (€)</option>
-      </select>
-    </div>
-    <div class="form-group">
-      <label for="valore">Inserisci valore:</label>
-      <input type="number" id="valore" min="0" />
-    </div>
-    <button id="calcola">Calcola</button>
-    <div id="output"></div>
-  </div>
-  <script src="script.js"></script>
+
+<h1>CAVAGNOLA MCT - Calcolo Prezzi</h1>
+
+<label for="classe">Seleziona Classe:</label>
+<select id="classe">
+  <option value="Classe1">Classe 1</option>
+  <option value="Classe2">Classe 2</option>
+  <option value="Classe3">Classe 3</option>
+  <option value="Classe4">Classe 4</option>
+</select>
+
+<label for="tipo">Tipo di valore da inserire:</label>
+<select id="tipo">
+  <option value="cntrCR">cntr CR</option>
+  <option value="prezzo">Prezzo (€)</option>
+</select>
+
+<label for="valore">Inserisci valore:</label>
+<input type="number" id="valore" placeholder="Esempio: 154" />
+
+<label for="ritardo">Ore di ritardo (solo se tipo = cntr CR):</label>
+<input type="number" id="ritardo" min="0" value="0" />
+
+<button id="calcola">Calcola</button>
+
+<div id="output"></div>
+
+<script>
+const dati = {
+  Classe1: [
+    { min: 135, max: 144, prezzo: 3, cntrSC: 32 },
+    { min: 145, max: 154, prezzo: 7, cntrSC: 32 },
+    { min: 155, max: 164, prezzo: 11, cntrSC: 32 },
+    { min: 165, max: 174, prezzo: 20, cntrSC: 32 },
+    { min: 175, max: 184, prezzo: 23, cntrSC: 32 },
+    { min: 185, max: 194, prezzo: 27, cntrSC: 32 },
+    { min: 195, max: 204, prezzo: 35, cntrSC: 32 },
+    { min: 205, max: Infinity, prezzo: 42, cntrSC: 32 },
+  ],
+  Classe2: [
+    { min: 125, max: 134, prezzo: 3, cntrSC: 32 },
+    { min: 135, max: 144, prezzo: 7, cntrSC: 32 },
+    { min: 145, max: 154, prezzo: 11, cntrSC: 32 },
+    { min: 155, max: 164, prezzo: 20, cntrSC: 32 },
+    { min: 165, max: 174, prezzo: 23, cntrSC: 32 },
+    { min: 175, max: 184, prezzo: 27, cntrSC: 32 },
+    { min: 185, max: 194, prezzo: 35, cntrSC: 32 },
+    { min: 195, max: Infinity, prezzo: 42, cntrSC: 32 },
+  ],
+  Classe3: [
+    { min: 110, max: 119, prezzo: 3, cntrSC: 30 },
+    { min: 120, max: 129, prezzo: 7, cntrSC: 30 },
+    { min: 130, max: 139, prezzo: 11, cntrSC: 30 },
+    { min: 140, max: 149, prezzo: 20, cntrSC: 30 },
+    { min: 150, max: 159, prezzo: 23, cntrSC: 30 },
+    { min: 160, max: 169, prezzo: 27, cntrSC: 30 },
+    { min: 170, max: 179, prezzo: 35, cntrSC: 30 },
+    { min: 180, max: Infinity, prezzo: 42, cntrSC: 30 },
+  ],
+  Classe4: [
+    { min: 100, max: 109, prezzo: 3, cntrSC: 28 },
+    { min: 110, max: 119, prezzo: 7, cntrSC: 28 },
+    { min: 120, max: 129, prezzo: 11, cntrSC: 28 },
+    { min: 130, max: 139, prezzo: 20, cntrSC: 28 },
+    { min: 140, max: 149, prezzo: 23, cntrSC: 28 },
+    { min: 150, max: 159, prezzo: 27, cntrSC: 28 },
+    { min: 160, max: 169, prezzo: 35, cntrSC: 28 },
+    { min: 170, max: Infinity, prezzo: 42, cntrSC: 28 },
+  ],
+};
+
+document.getElementById("calcola").addEventListener("click", () => {
+  const classe = document.getElementById("classe").value;
+  const tipo = document.getElementById("tipo").value;
+  const valoreInput = document.getElementById("valore").value;
+  const ritardoInput = document.getElementById("ritardo").value; // ore di ritardo
+  const output = document.getElementById("output");
+
+  const valore = Number(valoreInput);
+  const ritardo = Number(ritardoInput);
+
+  if (isNaN(valore)) {
+    output.textContent = "Inserisci un valore valido.";
+    return;
+  }
+  if (ritardoInput && (isNaN(ritardo) || ritardo < 0)) {
+    output.textContent = "Inserisci un numero valido di ore di ritardo (0 o più).";
+    return;
+  }
+
+  const intervalli = dati[classe];
+  if (!intervalli) {
+    output.textContent = "Classe non trovata.";
+    return;
+  }
+
+  let valoreModificato = valore;
+  if (ritardo && ritardo > 0 && tipo === "cntrCR") {
+    // Aumento valore cntr CR del 10% per ogni ora di ritardo
+    valoreModificato = Math.ceil(valore * (1 + 0.10 * ritardo));
+  }
+
+  let risultato = null;
+
+  if (tipo === "cntrCR") {
+    risultato = intervalli.find(
+      (el) => valoreModificato >= el.min && valoreModificato <= el.max
+    );
+    if (risultato) {
+      output.textContent = `Prezzo: €${risultato.prezzo} — Contenitori SC: ${risultato.cntrSC}\n` +
+        `Valore iniziale: ${valore}, Valore con ritardo (+${ritardo * 10}%): ${valoreModificato}`;
+    } else {
+      output.textContent = "Valore fuori intervallo per cntr CR.";
+    }
+  } else if (tipo === "prezzo") {
+    risultato = intervalli.find(
+      (el) => valore === el.prezzo
+    );
+    if (risultato) {
+      output.textContent = `cntr CR: da ${risultato.min} a ${risultato.max === Infinity ? 'oltre' : risultato.max} — Contenitori SC: ${risultato.cntrSC}`;
+    } else {
+      output.textContent = "Prezzo non trovato tra gli intervalli.";
+    }
+  }
+});
+</script>
+
 </body>
 </html>
