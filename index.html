@@ -127,7 +127,7 @@ document.getElementById("calcola").addEventListener("click", () => {
   const classe = document.getElementById("classe").value;
   const tipo = document.getElementById("tipo").value;
   const valoreInput = document.getElementById("valore").value;
-  const ritardoInput = document.getElementById("ritardo").value; // ore di ritardo
+  const ritardoInput = document.getElementById("ritardo").value;
   const output = document.getElementById("output");
 
   const valore = Number(valoreInput);
@@ -137,6 +137,7 @@ document.getElementById("calcola").addEventListener("click", () => {
     output.textContent = "Inserisci un valore valido.";
     return;
   }
+
   if (ritardoInput && (isNaN(ritardo) || ritardo < 0)) {
     output.textContent = "Inserisci un numero valido di ore di ritardo (0 o più).";
     return;
@@ -149,27 +150,30 @@ document.getElementById("calcola").addEventListener("click", () => {
   }
 
   let valoreModificato = valore;
-  if (ritardo && ritardo > 0 && tipo === "cntrCR") {
-    // Aumento valore cntr CR del 10% per ogni ora di ritardo
+  if (tipo === "cntrCR" && ritardo > 0) {
     valoreModificato = Math.ceil(valore * (1 + 0.10 * ritardo));
   }
 
   let risultato = null;
+  let ritardoMsg = tipo === "cntrCR"
+    ? (ritardo > 0
+        ? `\nRitardo: ${ritardo}h (+${ritardo * 10}%) → cntr CR finale: ${valoreModificato}`
+        : "\nNessun ritardo applicato.")
+    : "";
 
   if (tipo === "cntrCR") {
     risultato = intervalli.find(
       (el) => valoreModificato >= el.min && valoreModificato <= el.max
     );
     if (risultato) {
-      output.textContent = `Prezzo: €${risultato.prezzo} — Contenitori SC: ${risultato.cntrSC}\n` +
-        `Valore iniziale: ${valore}, Valore con ritardo (+${ritardo * 10}%): ${valoreModificato}`;
+      output.textContent =
+        `Prezzo: €${risultato.prezzo} — Contenitori SC: ${risultato.cntrSC}` +
+        ritardoMsg;
     } else {
-      output.textContent = "Valore fuori intervallo per cntr CR.";
+      output.textContent = "Valore fuori intervallo per cntr CR." + ritardoMsg;
     }
   } else if (tipo === "prezzo") {
-    risultato = intervalli.find(
-      (el) => valore === el.prezzo
-    );
+    risultato = intervalli.find((el) => valore === el.prezzo);
     if (risultato) {
       output.textContent = `cntr CR: da ${risultato.min} a ${risultato.max === Infinity ? 'oltre' : risultato.max} — Contenitori SC: ${risultato.cntrSC}`;
     } else {
@@ -178,6 +182,5 @@ document.getElementById("calcola").addEventListener("click", () => {
   }
 });
 </script>
-
 </body>
 </html>
