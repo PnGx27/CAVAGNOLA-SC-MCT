@@ -40,32 +40,36 @@ const dati = {
     { min: 170, max: Infinity, prezzo: 42, cntrSC: 28 },
   ],
   ClasseGTW: [
-  { min: 55, max: 64, prezzo: 3, cntrSC: 32 },
-  { min: 65, max: 74, prezzo: 7, cntrSC: 32 },
-  { min: 75, max: 84, prezzo: 11, cntrSC: 32 },
-  { min: 85, max: 94, prezzo: 20, cntrSC: 32 },
-  { min: 95, max: 104, prezzo: 23, cntrSC: 32 },
-  { min: 105, max: 114, prezzo: 27, cntrSC: 32 },
-  { min: 115, max: 124, prezzo: 35, cntrSC: 32 },
-  { min: 125, max: Infinity, prezzo: 42, cntrSC: 32 },
-],
-ClasseRoRo: [
-  { min: 43, max: 52, prezzo: 3, cntrSC: 32 },
-  { min: 53, max: 62, prezzo: 7, cntrSC: 32 },
-  { min: 63, max: 72, prezzo: 11, cntrSC: 32 },
-  { min: 73, max: 82, prezzo: 20, cntrSC: 32 },
-  { min: 83, max: 92, prezzo: 23, cntrSC: 32 },
-  { min: 93, max: 102, prezzo: 27, cntrSC: 32 },
-  { min: 103, max: 112, prezzo: 35, cntrSC: 32 },
-  { min: 113, max: Infinity, prezzo: 42, cntrSC: 32 },
-],
+    { min: 55, max: 64, prezzo: 3, cntrSC: 32 },
+    { min: 65, max: 74, prezzo: 7, cntrSC: 32 },
+    { min: 75, max: 84, prezzo: 11, cntrSC: 32 },
+    { min: 85, max: 94, prezzo: 20, cntrSC: 32 },
+    { min: 95, max: 104, prezzo: 23, cntrSC: 32 },
+    { min: 105, max: 114, prezzo: 27, cntrSC: 32 },
+    { min: 115, max: 124, prezzo: 35, cntrSC: 32 },
+    { min: 125, max: Infinity, prezzo: 42, cntrSC: 32 },
+  ],
+  ClasseRoRo: [
+    { min: 43, max: 52, prezzo: 3, cntrSC: 32 },
+    { min: 53, max: 62, prezzo: 7, cntrSC: 32 },
+    { min: 63, max: 72, prezzo: 11, cntrSC: 32 },
+    { min: 73, max: 82, prezzo: 20, cntrSC: 32 },
+    { min: 83, max: 92, prezzo: 23, cntrSC: 32 },
+    { min: 93, max: 102, prezzo: 27, cntrSC: 32 },
+    { min: 103, max: 112, prezzo: 35, cntrSC: 32 },
+    { min: 113, max: Infinity, prezzo: 42, cntrSC: 32 },
+  ]
 };
 
 document.getElementById("calcola").addEventListener("click", () => {
   const classe = document.getElementById("classe").value;
   const tipo = document.getElementById("tipo").value;
-  const valore = Number(document.getElementById("valore").value);
+  const valoreInput = document.getElementById("valore").value;
+  const ritardoInput = document.getElementById("ritardo").value;
   const output = document.getElementById("output");
+
+  const valore = Number(valoreInput);
+  const ritardo = Number(ritardoInput);
 
   if (isNaN(valore)) {
     output.textContent = "Inserisci un valore valido.";
@@ -78,21 +82,31 @@ document.getElementById("calcola").addEventListener("click", () => {
     return;
   }
 
+  let valoreModificato = valore;
+  if (tipo === "cntrCR" && ritardo > 0) {
+    valoreModificato = Math.ceil(valore * (1 + 0.10 * ritardo));
+  }
+
   let risultato = null;
+  let ritardoMsg = tipo === "cntrCR"
+    ? (ritardo > 0
+        ? `\nRitardo: ${ritardo}h (+${ritardo * 10}%) → cntr CR finale: ${valoreModificato}`
+        : "\nNessun ritardo applicato.")
+    : "";
 
   if (tipo === "cntrCR") {
     risultato = intervalli.find(
-      (el) => valore >= el.min && valore <= el.max
+      (el) => valoreModificato >= el.min && valoreModificato <= el.max
     );
     if (risultato) {
-      output.textContent = `Prezzo: €${risultato.prezzo} — Contenitori SC: ${risultato.cntrSC}`;
+      output.textContent =
+        `Cavagnola di: €${risultato.prezzo} — Contenitori SC: ${risultato.cntrSC}` +
+        ritardoMsg;
     } else {
-      output.textContent = "Valore fuori intervallo per cntr CR.";
+      output.textContent = "Valore fuori intervallo per cntr CR." + ritardoMsg;
     }
   } else if (tipo === "prezzo") {
-    risultato = intervalli.find(
-      (el) => valore === el.prezzo
-    );
+    risultato = intervalli.find((el) => valore === el.prezzo);
     if (risultato) {
       output.textContent = `cntr CR: da ${risultato.min} a ${risultato.max === Infinity ? 'oltre' : risultato.max} — Contenitori SC: ${risultato.cntrSC}`;
     } else {
