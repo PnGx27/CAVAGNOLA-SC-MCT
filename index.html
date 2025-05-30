@@ -9,16 +9,13 @@
       background-color: #222;
       color: #f5a623;
       font-family: Arial, sans-serif;
-      margin: 0;
       padding: 20px;
-      overflow: hidden;
+      margin: 0;
     }
-
     label, select, input {
       display: block;
       margin: 10px 0 5px;
     }
-
     input, select {
       padding: 8px;
       width: 100%;
@@ -28,7 +25,6 @@
       background: #333;
       color: #f5a623;
     }
-
     button {
       margin-top: 15px;
       background-color: #d97115;
@@ -40,12 +36,10 @@
       font-weight: bold;
       max-width: 300px;
     }
-
     button:hover {
       background-color: #f5a623;
       color: #222;
     }
-
     #output {
       margin-top: 20px;
       white-space: pre-line;
@@ -57,43 +51,37 @@
       max-width: 350px;
     }
 
-    canvas#fireworks {
+    /* Fuochi e scritta */
+    #fireworks {
       position: fixed;
       top: 0;
       left: 0;
-      z-index: 1;
+      width: 100vw;
+      height: 100vh;
       pointer-events: none;
+      z-index: 1;
     }
-
     #fireworks-text {
       position: fixed;
-      top: 40%;
+      top: 50%;
       left: 50%;
       transform: translate(-50%, -50%);
       font-size: 48px;
       font-weight: bold;
       color: gold;
-      text-shadow: 0 0 10px #ffd700;
-      z-index: 2;
+      text-shadow: 2px 2px 8px #000;
+      z-index: 3;
       display: none;
-      animation: zoomIn 1s ease-out forwards;
     }
-
-    @keyframes zoomIn {
-      from {
-        transform: translate(-50%, -50%) scale(0.2);
-        opacity: 0;
-      }
-      to {
-        transform: translate(-50%, -50%) scale(1);
-        opacity: 1;
-      }
+    body, #output, button, input, select, label, h1 {
+      position: relative;
+      z-index: 2;
     }
   </style>
 </head>
 <body>
 
-<h1>CAVAGNOLA MCT - By AC </h1>
+<h1>CAVAGNOLA MCT - By AC</h1>
 
 <label for="classe">Seleziona Classe:</label>
 <select id="classe">
@@ -121,217 +109,167 @@
 
 <div id="output"></div>
 
+<!-- Scritta e canvas fuochi -->
 <canvas id="fireworks"></canvas>
 <div id="fireworks-text">Pijasti a DOPPIA</div>
 
 <script>
-  const dati = {
-    Classe1: [
-      { min: 135, max: 144, prezzo: 3, cntrSC: 32 },
-      { min: 145, max: 154, prezzo: 7, cntrSC: 32 },
-      { min: 155, max: 164, prezzo: 11, cntrSC: 32 },
-      { min: 165, max: 174, prezzo: 20, cntrSC: 32 },
-      { min: 175, max: 184, prezzo: 23, cntrSC: 32 },
-      { min: 185, max: 194, prezzo: 27, cntrSC: 32 },
-      { min: 195, max: 204, prezzo: 35, cntrSC: 32 },
-      { min: 205, max: Infinity, prezzo: 42, cntrSC: 32 },
-    ],
-    Classe2: [
-      { min: 125, max: 134, prezzo: 3, cntrSC: 32 },
-      { min: 135, max: 144, prezzo: 7, cntrSC: 32 },
-      { min: 145, max: 154, prezzo: 11, cntrSC: 32 },
-      { min: 155, max: 164, prezzo: 20, cntrSC: 32 },
-      { min: 165, max: 174, prezzo: 23, cntrSC: 32 },
-      { min: 175, max: 184, prezzo: 27, cntrSC: 32 },
-      { min: 185, max: 194, prezzo: 35, cntrSC: 32 },
-      { min: 195, max: Infinity, prezzo: 42, cntrSC: 32 },
-    ],
-    Classe3: [
-      { min: 110, max: 119, prezzo: 3, cntrSC: 30 },
-      { min: 120, max: 129, prezzo: 7, cntrSC: 30 },
-      { min: 130, max: 139, prezzo: 11, cntrSC: 30 },
-      { min: 140, max: 149, prezzo: 20, cntrSC: 30 },
-      { min: 150, max: 159, prezzo: 23, cntrSC: 30 },
-      { min: 160, max: 169, prezzo: 27, cntrSC: 30 },
-      { min: 170, max: 179, prezzo: 35, cntrSC: 30 },
-      { min: 180, max: Infinity, prezzo: 42, cntrSC: 30 },
-    ],
-    Classe4: [
-      { min: 100, max: 109, prezzo: 3, cntrSC: 28 },
-      { min: 110, max: 119, prezzo: 7, cntrSC: 28 },
-      { min: 120, max: 129, prezzo: 11, cntrSC: 28 },
-      { min: 130, max: 139, prezzo: 20, cntrSC: 28 },
-      { min: 140, max: 149, prezzo: 23, cntrSC: 28 },
-      { min: 150, max: 159, prezzo: 27, cntrSC: 28 },
-      { min: 160, max: 169, prezzo: 35, cntrSC: 28 },
-      { min: 170, max: Infinity, prezzo: 42, cntrSC: 28 },
-    ],
-    ClasseGTW: [
-      { min: 55, max: 64, prezzo: 3, cntrSC: 32 },
-      { min: 65, max: 74, prezzo: 7, cntrSC: 32 },
-      { min: 75, max: 84, prezzo: 11, cntrSC: 32 },
-      { min: 85, max: 94, prezzo: 20, cntrSC: 32 },
-      { min: 95, max: 104, prezzo: 23, cntrSC: 32 },
-      { min: 105, max: 114, prezzo: 27, cntrSC: 32 },
-      { min: 115, max: 124, prezzo: 35, cntrSC: 32 },
-      { min: 125, max: Infinity, prezzo: 42, cntrSC: 32 },
-    ],
-    ClasseRoRo: [
-      { min: 43, max: 52, prezzo: 3, cntrSC: 32 },
-      { min: 53, max: 62, prezzo: 7, cntrSC: 32 },
-      { min: 63, max: 72, prezzo: 11, cntrSC: 32 },
-      { min: 73, max: 82, prezzo: 20, cntrSC: 32 },
-      { min: 83, max: 92, prezzo: 23, cntrSC: 32 },
-      { min: 93, max: 102, prezzo: 27, cntrSC: 32 },
-      { min: 103, max: 112, prezzo: 35, cntrSC: 32 },
-      { min: 113, max: Infinity, prezzo: 42, cntrSC: 32 },
-    ],
-  };
+const dati = {
+  Classe1: [ { min: 135, max: 144, prezzo: 3, cntrSC: 32 }, { min: 145, max: 154, prezzo: 7, cntrSC: 32 }, { min: 155, max: 164, prezzo: 11, cntrSC: 32 }, { min: 165, max: 174, prezzo: 20, cntrSC: 32 }, { min: 175, max: 184, prezzo: 23, cntrSC: 32 }, { min: 185, max: 194, prezzo: 27, cntrSC: 32 }, { min: 195, max: 204, prezzo: 35, cntrSC: 32 }, { min: 205, max: Infinity, prezzo: 42, cntrSC: 32 }, ],
+  Classe2: [ { min: 125, max: 134, prezzo: 3, cntrSC: 32 }, { min: 135, max: 144, prezzo: 7, cntrSC: 32 }, { min: 145, max: 154, prezzo: 11, cntrSC: 32 }, { min: 155, max: 164, prezzo: 20, cntrSC: 32 }, { min: 165, max: 174, prezzo: 23, cntrSC: 32 }, { min: 175, max: 184, prezzo: 27, cntrSC: 32 }, { min: 185, max: 194, prezzo: 35, cntrSC: 32 }, { min: 195, max: Infinity, prezzo: 42, cntrSC: 32 }, ],
+  Classe3: [ { min: 110, max: 119, prezzo: 3, cntrSC: 30 }, { min: 120, max: 129, prezzo: 7, cntrSC: 30 }, { min: 130, max: 139, prezzo: 11, cntrSC: 30 }, { min: 140, max: 149, prezzo: 20, cntrSC: 30 }, { min: 150, max: 159, prezzo: 23, cntrSC: 30 }, { min: 160, max: 169, prezzo: 27, cntrSC: 30 }, { min: 170, max: 179, prezzo: 35, cntrSC: 30 }, { min: 180, max: Infinity, prezzo: 42, cntrSC: 30 }, ],
+  Classe4: [ { min: 100, max: 109, prezzo: 3, cntrSC: 28 }, { min: 110, max: 119, prezzo: 7, cntrSC: 28 }, { min: 120, max: 129, prezzo: 11, cntrSC: 28 }, { min: 130, max: 139, prezzo: 20, cntrSC: 28 }, { min: 140, max: 149, prezzo: 23, cntrSC: 28 }, { min: 150, max: 159, prezzo: 27, cntrSC: 28 }, { min: 160, max: 169, prezzo: 35, cntrSC: 28 }, { min: 170, max: Infinity, prezzo: 42, cntrSC: 28 }, ],
+  ClasseGTW: [ { min: 55, max: 64, prezzo: 3, cntrSC: 32 }, { min: 65, max: 74, prezzo: 7, cntrSC: 32 }, { min: 75, max: 84, prezzo: 11, cntrSC: 32 }, { min: 85, max: 94, prezzo: 20, cntrSC: 32 }, { min: 95, max: 104, prezzo: 23, cntrSC: 32 }, { min: 105, max: 114, prezzo: 27, cntrSC: 32 }, { min: 115, max: 124, prezzo: 35, cntrSC: 32 }, { min: 125, max: Infinity, prezzo: 42, cntrSC: 32 }, ],
+  ClasseRoRo: [ { min: 43, max: 52, prezzo: 3, cntrSC: 32 }, { min: 53, max: 62, prezzo: 7, cntrSC: 32 }, { min: 63, max: 72, prezzo: 11, cntrSC: 32 }, { min: 73, max: 82, prezzo: 20, cntrSC: 32 }, { min: 83, max: 92, prezzo: 23, cntrSC: 32 }, { min: 93, max: 102, prezzo: 27, cntrSC: 32 }, { min: 103, max: 112, prezzo: 35, cntrSC: 32 }, { min: 113, max: Infinity, prezzo: 42, cntrSC: 32 }, ],
+};
 
-  document.getElementById("calcola").addEventListener("click", () => {
-    const classe = document.getElementById("classe").value;
-    const tipo = document.getElementById("tipo").value;
-    const valore = Number(document.getElementById("valore").value);
-    const ritardo = Number(document.getElementById("ritardo").value);
-    const output = document.getElementById("output");
-    const intervalli = dati[classe];
+document.getElementById("calcola").addEventListener("click", () => {
+  const classe = document.getElementById("classe").value;
+  const tipo = document.getElementById("tipo").value;
+  const valore = Number(document.getElementById("valore").value);
+  const ritardo = Number(document.getElementById("ritardo").value);
+  const output = document.getElementById("output");
 
-    if (!intervalli || isNaN
-        (valore)) {
-      output.textContent = "Inserisci un valore valido.";
-      return;
-    }
-
-    let valoreModificato = valore;
-    if (tipo === "cntrCR" && ritardo > 0) {
-      valoreModificato = Math.ceil(valore * (1 + 0.10 * ritardo));
-    }
-
-    let risultato = null;
-    let ritardoMsg = tipo === "cntrCR"
-      ? (ritardo > 0
-          ? `\nRitardo: ${ritardo}h (+${ritardo * 10}%) → cntr CR finale: ${valoreModificato}`
-          : "\nNessun ritardo applicato.")
-      : "";
-
-    if (tipo === "cntrCR") {
-      risultato = intervalli.find((el) => valoreModificato >= el.min && valoreModificato <= el.max);
-      if (risultato) {
-        output.textContent = `Cavagnola di: €${risultato.prezzo} — Contenitori SC: ${risultato.cntrSC}` + ritardoMsg;
-        if (risultato.prezzo === 42) {
-          startFireworks();
-        }
-      } else {
-        output.textContent = "Valore fuori intervallo per cntr CR." + ritardoMsg;
-      }
-    } else if (tipo === "prezzo") {
-      risultato = intervalli.find((el) => valore === el.prezzo);
-      if (risultato) {
-        output.textContent = `cntr CR: da ${risultato.min} a ${risultato.max === Infinity ? 'oltre' : risultato.max} — Contenitori SC: ${risultato.cntrSC}`;
-        if (valore === 42) {
-          startFireworks();
-        }
-      } else {
-        output.textContent = "Prezzo non trovato tra gli intervalli.";
-      }
-    }
-  });
-
-  // Fuochi d'artificio realistici con canvas
-  const canvas = document.getElementById("fireworks");
-  const ctx = canvas.getContext("2d");
-  canvas.width = window.innerWidth;
-  canvas.height = window.innerHeight;
-
-  let fireworks = [];
-
-  function Firework() {
-    this.x = Math.random() * canvas.width;
-    this.y = canvas.height;
-    this.targetY = canvas.height / 2 + (Math.random() * 100 - 50);
-    this.size = 3;
-    this.speed = 5 + Math.random() * 3;
-    this.exploded = false;
-    this.particles = [];
+  if (isNaN(valore)) {
+    output.textContent = "Inserisci un valore valido.";
+    return;
+  }
+  if (ritardo < 0 || isNaN(ritardo)) {
+    output.textContent = "Inserisci un numero valido di ore di ritardo (0 o più).";
+    return;
   }
 
-  Firework.prototype.update = function () {
-    if (!this.exploded) {
-      this.y -= this.speed;
-      if (this.y <= this.targetY) {
-        this.exploded = true;
-        for (let i = 0; i < 30; i++) {
-          this.particles.push(new Particle(this.x, this.y));
-        }
-      }
+  const intervalli = dati[classe];
+  if (!intervalli) {
+    output.textContent = "Classe non trovata.";
+    return;
+  }
+
+  let valoreModificato = valore;
+  if (tipo === "cntrCR" && ritardo > 0)
+
+  if (tipo === "cntrCR" && ritardo > 0) {
+    valoreModificato = Math.ceil(valore * (1 + 0.10 * ritardo));
+  }
+
+  let risultato = null;
+  let ritardoMsg = tipo === "cntrCR"
+    ? (ritardo > 0
+        ? `\nRitardo: ${ritardo}h (+${ritardo * 10}%) → cntr CR finale: ${valoreModificato}`
+        : "\nNessun ritardo applicato.")
+    : "";
+
+  if (tipo === "cntrCR") {
+    risultato = intervalli.find(
+      (el) => valoreModificato >= el.min && valoreModificato <= el.max
+    );
+    if (risultato) {
+      output.textContent = `Cavagnola di: €${risultato.prezzo} — Contenitori SC: ${risultato.cntrSC}${ritardoMsg}`;
     } else {
-      this.particles.forEach((p) => p.update());
+      output.textContent = "Valore fuori intervallo per cntr CR." + ritardoMsg;
     }
-  };
-
-  Firework.prototype.draw = function () {
-    if (!this.exploded) {
-      ctx.beginPath();
-      ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
-      ctx.fillStyle = "white";
-      ctx.fill();
+  } else if (tipo === "prezzo") {
+    risultato = intervalli.find((el) => valore === el.prezzo);
+    if (risultato) {
+      output.textContent = `cntr CR: da ${risultato.min} a ${risultato.max === Infinity ? 'oltre' : risultato.max} — Contenitori SC: ${risultato.cntrSC}`;
     } else {
-      this.particles.forEach((p) => p.draw());
+      output.textContent = "Prezzo non trovato tra gli intervalli.";
     }
-  };
-
-  function Particle(x, y) {
-    this.x = x;
-    this.y = y;
-    this.size = 2;
-    this.speedX = Math.cos(Math.random() * 2 * Math.PI) * (2 + Math.random() * 2);
-    this.speedY = Math.sin(Math.random() * 2 * Math.PI) * (2 + Math.random() * 2);
-    this.alpha = 1;
-    this.color = `hsl(${Math.random() * 360}, 100%, 50%)`;
   }
 
-  Particle.prototype.update = function () {
-    this.x += this.speedX;
-    this.y += this.speedY;
-    this.alpha -= 0.02;
-  };
-
-  Particle.prototype.draw = function () {
-    ctx.globalAlpha = this.alpha;
-    ctx.beginPath();
-    ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
-    ctx.fillStyle = this.color;
-    ctx.fill();
-    ctx.globalAlpha = 1;
-  };
-
-  function animate() {
-    ctx.fillStyle = "rgba(0, 0, 0, 0.2)";
-    ctx.fillRect(0, 0, canvas.width, canvas.height);
-
-    fireworks = fireworks.filter(fw => !fw.exploded || fw.particles.some(p => p.alpha > 0));
-    fireworks.forEach((fw) => {
-      fw.update();
-      fw.draw();
-    });
-
-    requestAnimationFrame(animate);
+  // Attiva fuochi e scritta se è 42€
+  if (risultato && risultato.prezzo === 42) {
+    startFireworks();
   }
-
-  function startFireworks() {
-    document.getElementById("fireworks-text").style.display = "block";
-    for (let i = 0; i < 5; i++) {
-      setTimeout(() => {
-        fireworks.push(new Firework());
-      }, i * 400);
-    }
-    setTimeout(() => {
-      document.getElementById("fireworks-text").style.display = "none";
-    }, 6000);
-  }
-
-  animate();
+});
 </script>
 
-</body>
-</html>
+<script>
+  // Script base dei fuochi realistici
+  const canvas = document.getElementById('fireworks');
+  const ctx = canvas.getContext('2d');
+  let fireworks = [];
+
+  function resizeCanvas() {
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
+  }
+  window.addEventListener('resize', resizeCanvas);
+  resizeCanvas();
+
+  function random(min, max) {
+    return Math.random() * (max - min) + min;
+  }
+
+  function createFirework() {
+    const x = random(canvas.width * 0.3, canvas.width * 0.7);
+    const y = canvas.height;
+    const targetY = canvas.height * 0.5;
+    const speed = random(5, 7);
+    fireworks.push({ x, y, targetY, speed, exploded: false, particles: [] });
+  }
+
+  function explode(fw) {
+    for (let i = 0; i < 50; i++) {
+      const angle = Math.random() * Math.PI * 2;
+      const speed = Math.random() * 4 + 1;
+      fw.particles.push({
+        x: fw.x,
+        y: fw.targetY,
+        dx: Math.cos(angle) * speed,
+        dy: Math.sin(angle) * speed,
+        life: 60,
+        color: `hsl(${Math.random() * 360}, 100%, 60%)`
+      });
+    }
+  }
+
+  function updateFireworks() {
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    fireworks.forEach((fw) => {
+      if (!fw.exploded) {
+        fw.y -= fw.speed;
+        ctx.fillStyle = '#fff';
+        ctx.beginPath();
+        ctx.arc(fw.x, fw.y, 2, 0, Math.PI * 2);
+        ctx.fill();
+        if (fw.y <= fw.targetY) {
+          fw.exploded = true;
+          explode(fw);
+        }
+      } else {
+        fw.particles.forEach((p) => {
+          p.x += p.dx;
+          p.y += p.dy;
+          p.dy += 0.05;
+          p.life--;
+          ctx.fillStyle = p.color;
+          ctx.beginPath();
+          ctx.arc(p.x, p.y, 2, 0, Math.PI * 2);
+          ctx.fill();
+        });
+        fw.particles = fw.particles.filter(p => p.life > 0);
+      }
+    });
+    fireworks = fireworks.filter(fw => fw.particles.length > 0 || !fw.exploded);
+  }
+
+  function animate() {
+    updateFireworks();
+    requestAnimationFrame(animate);
+  }
+  animate();
+
+  function startFireworks() {
+    document.getElementById('fireworks-text').style.display = 'block';
+    let count = 0;
+    const interval = setInterval(() => {
+      createFirework();
+      count++;
+      if (count >= 6) clearInterval(interval);
+    }, 400);
+    setTimeout(() => {
+      document.getElementById('fireworks-text').style.display = 'none';
+    }, 4000);
+  }
+</script>
