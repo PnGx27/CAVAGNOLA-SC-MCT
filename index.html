@@ -1,55 +1,55 @@
 <!DOCTYPE html>
 <html lang="it">
 <head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>CAVAGNOLA MCT - By AC</title>
-<style>
-  body {
-    background-color: #222;
-    color: #f5a623;
-    font-family: Arial, sans-serif;
-    padding: 20px;
-  }
-  label, select, input {
-    display: block;
-    margin: 10px 0 5px;
-  }
-  input, select {
-    padding: 8px;
-    width: 100%;
-    max-width: 300px;
-    border: 2px solid #f5a623;
-    border-radius: 5px;
-    background: #333;
-    color: #f5a623;
-  }
-  button {
-    margin-top: 15px;
-    background-color: #d97115;
-    color: #fff;
-    border: none;
-    padding: 12px 20px;
-    border-radius: 6px;
-    cursor: pointer;
-    font-weight: bold;
-    max-width: 300px;
-  }
-  button:hover {
-    background-color: #f5a623;
-    color: #222;
-  }
-  #output {
-    margin-top: 20px;
-    white-space: pre-line;
-    font-size: 1.1em;
-    background: #333;
-    padding: 15px;
-    border-radius: 8px;
-    border: 1px solid #f5a623;
-    max-width: 350px;
-  }
-</style>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>CAVAGNOLA MCT - By AC</title>
+  <style>
+    body {
+      background-color: #222;
+      color: #f5a623;
+      font-family: Arial, sans-serif;
+      padding: 20px;
+    }
+    label, select, input {
+      display: block;
+      margin: 10px 0 5px;
+    }
+    input, select {
+      padding: 8px;
+      width: 100%;
+      max-width: 300px;
+      border: 2px solid #f5a623;
+      border-radius: 5px;
+      background: #333;
+      color: #f5a623;
+    }
+    button {
+      margin-top: 15px;
+      background-color: #d97115;
+      color: #fff;
+      border: none;
+      padding: 12px 20px;
+      border-radius: 6px;
+      cursor: pointer;
+      font-weight: bold;
+      max-width: 300px;
+    }
+    button:hover {
+      background-color: #f5a623;
+      color: #222;
+    }
+    #output {
+      margin-top: 20px;
+      white-space: pre-line;
+      font-size: 1.1em;
+      background: #333;
+      padding: 15px;
+      border-radius: 8px;
+      border: 1px solid #f5a623;
+      max-width: 350px;
+    }
+  </style>
 </head>
 <body>
 
@@ -80,6 +80,31 @@
 <button id="calcola">Calcola</button>
 
 <div id="output"></div>
+
+<!-- Livello 2: Fuochi -->
+<div id="fireworks-container" style="pointer-events:none; position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; z-index: 1000;"></div>
+
+<!-- Livello 3: Scritta -->
+<div id="fireworks-text" style="
+  position: fixed;
+  top: 30%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  font-size: 4rem;
+  font-weight: bold;
+  color: gold;
+  text-shadow:
+    0 0 5px #fff,
+    0 0 10px gold,
+    0 0 20px orange,
+    0 0 30px gold;
+  z-index: 1100;
+  display: none;
+  user-select: none;
+  pointer-events: none;
+">
+  Pijasti a DOPPIA
+</div>
 
 <script>
 const dati = {
@@ -145,6 +170,53 @@ const dati = {
   ],
 };
 
+function creaFuochi() {
+  const container = document.getElementById('fireworks-container');
+  container.innerHTML = '';
+  for(let i = 0; i < 30; i++) {
+    const fuoco = document.createElement('div');
+    const size = Math.random() * 10 + 5;
+    fuoco.style.position = 'absolute';
+    fuoco.style.borderRadius = '50%';
+    fuoco.style.width = size + 'px';
+    fuoco.style.height = size + 'px';
+    fuoco.style.backgroundColor = `hsl(${Math.random()*360}, 100%, 50%)`;
+    fuoco.style.top = (Math.random() * 100) + 'vh';
+    fuoco.style.left = (Math.random() * 100) + 'vw';
+    fuoco.style.opacity = 1;
+    fuoco.style.animation = 'fadeOut 1.5s forwards';
+    container.appendChild(fuoco);
+  }
+  setTimeout(() => {
+    container.innerHTML = '';
+    container.style.display = 'none';
+  }, 2000);
+}
+
+const style = document.createElement('style');
+style.textContent = `
+  @keyframes fadeOut {
+    to {
+      opacity: 0;
+      transform: scale(2);
+    }
+  }
+`;
+document.head.appendChild(style);
+
+function checkPrezzoFuochi(prezzo) {
+  if (prezzo === 42) {
+    const testo = document.getElementById('fireworks-text');
+    testo.style.display = 'block';
+    const container = document.getElementById('fireworks-container');
+    container.style.display = 'block';
+    creaFuochi();
+    setTimeout(() => {
+      testo.style.display = 'none';
+    }, 3000);
+  }
+}
+
 document.getElementById("calcola").addEventListener("click", () => {
   const classe = document.getElementById("classe").value;
   const tipo = document.getElementById("tipo").value;
@@ -191,6 +263,7 @@ document.getElementById("calcola").addEventListener("click", () => {
       output.textContent =
         `Cavagnola di: €${risultato.prezzo} — Contenitori SC: ${risultato.cntrSC}` +
         ritardoMsg;
+      checkPrezzoFuochi(risultato.prezzo);
     } else {
       output.textContent = "Valore fuori intervallo per cntr CR." + ritardoMsg;
     }
@@ -198,32 +271,12 @@ document.getElementById("calcola").addEventListener("click", () => {
     risultato = intervalli.find((el) => valore === el.prezzo);
     if (risultato) {
       output.textContent = `cntr CR: da ${risultato.min} a ${risultato.max === Infinity ? 'oltre' : risultato.max} — Contenitori SC: ${risultato.cntrSC}`;
+      checkPrezzoFuochi(risultato.prezzo);
     } else {
       output.textContent = "Prezzo non trovato tra gli intervalli.";
     }
   }
 });
 </script>
-
-<script>
-if ('serviceWorker' in navigator) {
-  navigator.serviceWorker.register('service-worker.js')
-    .then(() => console.log('✅ Service Worker registrato'))
-    .catch((error) => console.log('❌ Errore nel Service Worker:', error));
-}
-</script>
-<!-- ... tutto il tuo HTML precedente ... -->
-
-<!-- Fuochi d'artificio e scritta sopra tutto -->
-<div id="fireworks-container" class="hidden"></div>
-<div id="fireworks-text">Pijasti a DOPPIA</div>
-<script>
-  // Qui il codice JS per i fuochi e la scritta
-  // (Ti preparo uno snippet pronto da incollare se vuoi)
-</script>
-</body>
-</html>
-</body>
-</html>
 </body>
 </html>
