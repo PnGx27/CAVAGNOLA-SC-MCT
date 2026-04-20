@@ -171,20 +171,20 @@ button:hover {
       return;
     }
 
-    let valoreModificato = valore;
-    if (tipo === "cntrCR" && ritardo > 0) {
-      valoreModificato = Math.ceil(valore * (1 + 0.10 * ritardo));
-    }
-
     let risultato = null;
     let ritardoMsg = tipo === "cntrCR"
       ? (ritardo > 0
-          ? `\nRitardo: ${ritardo}h (+${ritardo * 10}%) → cntr CR finale: ${valoreModificato}`
+          ? `\nRitardo: ${ritardo}h (-${ritardo * 10}%) → soglie abbassate del ${ritardo * 10}%`
           : "\nNessun ritardo applicato.")
       : "";
 
     if (tipo === "cntrCR") {
-      risultato = intervalli.find((el) => valoreModificato >= el.min && valoreModificato <= el.max);
+      const fattore = ritardo > 0 ? (1 - 0.10 * ritardo) : 1;
+      risultato = intervalli.find((el) => {
+        const minR = Math.floor(el.min * fattore);
+        const maxR = el.max === Infinity ? Infinity : Math.floor(el.max * fattore);
+        return valore >= minR && valore <= maxR;
+      });
       if (risultato) {
         output.textContent = `Cavagnola di: €${risultato.prezzo} — Contenitori SC: ${risultato.cntrSC}` + ritardoMsg;
       } else {
