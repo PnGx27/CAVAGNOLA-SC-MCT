@@ -175,7 +175,9 @@ if (tipo === "cntrCR" && ritardo > 0) {
       (el) => valoreModificato >= el.min && valoreModificato <= el.max
     );
     if (risultato) {
-      output.textContent = `Cavagnola di: €${risultato.prezzo} — Contenitori SC: ${risultato.cntrSC}${ritardoMsg}`;
+      const obiettivoFinale = obiettivoRidotto ?? risultato.cntrSC;
+
+output.textContent = `Cavagnola di: €${risultato.prezzo} — Contenitori SC: ${obiettivoFinale}${ritardoMsg}`;
     } else {
       output.textContent = "Valore fuori intervallo per cntr CR." + ritardoMsg;
     }
