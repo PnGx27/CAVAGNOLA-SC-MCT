@@ -1,4 +1,5 @@
 <!DOCTYPE html>
+
 <html lang="it">
 <head>
   <meta charset="UTF-8" />
@@ -14,81 +15,51 @@
       overflow: hidden;
     }
 
-    label, select, input {
-      display: block;
-      margin: 10px 0 5px;
-    }
+```
+label, select, input {
+  display: block;
+  margin: 10px 0 5px;
+}
 
-    input, select {
-      padding: 8px;
-      width: 100%;
-      max-width: 300px;
-      border: 2px solid #f5a623;
-      border-radius: 5px;
-      background: #333;
-      color: #f5a623;
-    }
+input, select {
+  padding: 8px;
+  width: 100%;
+  max-width: 300px;
+  border: 2px solid #f5a623;
+  border-radius: 5px;
+  background: #333;
+  color: #f5a623;
+}
 
-    button {
-      margin-top: 15px;
-      background-color: #d97115;
-      color: #fff;
-      border: none;
-      padding: 12px 20px;
-      border-radius: 6px;
-      cursor: pointer;
-      font-weight: bold;
-      max-width: 300px;
-    }
+button {
+  margin-top: 15px;
+  background-color: #d97115;
+  color: #fff;
+  border: none;
+  padding: 12px 20px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-weight: bold;
+  max-width: 300px;
+}
 
-    button:hover {
-      background-color: #f5a623;
-      color: #222;
-    }
+button:hover {
+  background-color: #f5a623;
+  color: #222;
+}
 
-    #output {
-      margin-top: 20px;
-      white-space: pre-line;
-      font-size: 1.1em;
-      background: #333;
-      padding: 15px;
-      border-radius: 8px;
-      border: 1px solid #f5a623;
-      max-width: 350px;
-    }
+#output {
+  margin-top: 20px;
+  white-space: pre-line;
+  font-size: 1.1em;
+  background: #333;
+  padding: 15px;
+  border-radius: 8px;
+  border: 1px solid #f5a623;
+  max-width: 350px;
+}
+```
 
-    canvas#fireworks {
-      position: fixed;
-      top: 0;
-      left: 0;
-      z-index: 1;
-      pointer-events: none;
-    }
-
-    #fireworks-text {
-      position: fixed;
-      top: 40%;
-      left: 50%;
-      transform: translate(-50%, -50%);
-      font-size: 48px;
-      font-weight: bold;
-      color: gold;
-      text-shadow: 0 0 10px #ffd700;
-      z-index: 2;
-      display: none;
-      animation: zoomIn 1s ease-out forwards;
-    }
-
-    @keyframes zoomIn {
-      from {
-        transform: translate(-50%, -50%) scale(0.2);
-        opacity: 0;
-      }
-      to {
-        transform: translate(-50%, -50%) scale(1);
-        opacity: 1;
-      }
-    }
   </style>
 </head>
 <body>
@@ -97,6 +68,7 @@
 
 <label for="classe">Seleziona Classe:</label>
 <select id="classe">
+
   <option value="Classe1">Classe 1</option>
   <option value="Classe2">Classe 2</option>
   <option value="Classe3">Classe 3</option>
@@ -107,6 +79,7 @@
 
 <label for="tipo">cntr CR o Cavagnola?:</label>
 <select id="tipo">
+
   <option value="cntrCR">cntr CR</option>
   <option value="prezzo">Prezzo (€)</option>
 </select>
@@ -120,9 +93,6 @@
 <button id="calcola">Calcola</button>
 
 <div id="output"></div>
-
-<canvas id="fireworks"></canvas>
-<div id="fireworks-text">Pijasti a DOPPIA</div>
 
 <script>
   const dati = {
@@ -196,8 +166,7 @@
     const output = document.getElementById("output");
     const intervalli = dati[classe];
 
-    if (!intervalli || isNaN
-        (valore)) {
+    if (!intervalli || isNaN(valore)) {
       output.textContent = "Inserisci un valore valido.";
       return;
     }
@@ -218,9 +187,6 @@
       risultato = intervalli.find((el) => valoreModificato >= el.min && valoreModificato <= el.max);
       if (risultato) {
         output.textContent = `Cavagnola di: €${risultato.prezzo} — Contenitori SC: ${risultato.cntrSC}` + ritardoMsg;
-        if (risultato.prezzo === 42) {
-          startFireworks();
-        }
       } else {
         output.textContent = "Valore fuori intervallo per cntr CR." + ritardoMsg;
       }
@@ -228,109 +194,13 @@
       risultato = intervalli.find((el) => valore === el.prezzo);
       if (risultato) {
         output.textContent = `cntr CR: da ${risultato.min} a ${risultato.max === Infinity ? 'oltre' : risultato.max} — Contenitori SC: ${risultato.cntrSC}`;
-        if (valore === 42) {
-          startFireworks();
-        }
       } else {
         output.textContent = "Prezzo non trovato tra gli intervalli.";
       }
     }
   });
 
-  // Fuochi d'artificio realistici con canvas
-  const canvas = document.getElementById("fireworks");
-  const ctx = canvas.getContext("2d");
-  canvas.width = window.innerWidth;
-  canvas.height = window.innerHeight;
 
-  let fireworks = [];
-
-  function Firework() {
-    this.x = Math.random() * canvas.width;
-    this.y = canvas.height;
-    this.targetY = canvas.height / 2 + (Math.random() * 100 - 50);
-    this.size = 3;
-    this.speed = 5 + Math.random() * 3;
-    this.exploded = false;
-    this.particles = [];
-  }
-
-  Firework.prototype.update = function () {
-    if (!this.exploded) {
-      this.y -= this.speed;
-      if (this.y <= this.targetY) {
-        this.exploded = true;
-        for (let i = 0; i < 30; i++) {
-          this.particles.push(new Particle(this.x, this.y));
-        }
-      }
-    } else {
-      this.particles.forEach((p) => p.update());
-    }
-  };
-
-  Firework.prototype.draw = function () {
-    if (!this.exploded) {
-      ctx.beginPath();
-      ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
-      ctx.fillStyle = "white";
-      ctx.fill();
-    } else {
-      this.particles.forEach((p) => p.draw());
-    }
-  };
-
-  function Particle(x, y) {
-    this.x = x;
-    this.y = y;
-    this.size = 2;
-    this.speedX = Math.cos(Math.random() * 2 * Math.PI) * (2 + Math.random() * 2);
-    this.speedY = Math.sin(Math.random() * 2 * Math.PI) * (2 + Math.random() * 2);
-    this.alpha = 1;
-    this.color = `hsl(${Math.random() * 360}, 100%, 50%)`;
-  }
-
-  Particle.prototype.update = function () {
-    this.x += this.speedX;
-    this.y += this.speedY;
-    this.alpha -= 0.02;
-  };
-
-  Particle.prototype.draw = function () {
-    ctx.globalAlpha = this.alpha;
-    ctx.beginPath();
-    ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
-    ctx.fillStyle = this.color;
-    ctx.fill();
-    ctx.globalAlpha = 1;
-  };
-
-  function animate() {
-    ctx.fillStyle = "rgba(0, 0, 0, 0.2)";
-    ctx.fillRect(0, 0, canvas.width, canvas.height);
-
-    fireworks = fireworks.filter(fw => !fw.exploded || fw.particles.some(p => p.alpha > 0));
-    fireworks.forEach((fw) => {
-      fw.update();
-      fw.draw();
-    });
-
-    requestAnimationFrame(animate);
-  }
-
-  function startFireworks() {
-    document.getElementById("fireworks-text").style.display = "block";
-    for (let i = 0; i < 5; i++) {
-      setTimeout(() => {
-        fireworks.push(new Firework());
-      }, i * 400);
-    }
-    setTimeout(() => {
-      document.getElementById("fireworks-text").style.display = "none";
-    }, 6000);
-  }
-
-  animate();
 </script>
 
 </body>
