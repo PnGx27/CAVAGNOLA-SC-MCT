@@ -3,62 +3,58 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>CAVAGNOLA MCT - By AC</title>
+<title>CAVAGNOLA MCT - FIX</title>
 
 <style>
 body {
-  background-color: #222;
-  color: #f5a623;
-  font-family: Arial, sans-serif;
-  padding: 20px;
-  margin: 0;
+  background:#222;
+  color:#f5a623;
+  font-family:Arial;
+  padding:20px;
 }
+
 label, select, input {
-  display: block;
-  margin: 10px 0 5px;
+  display:block;
+  margin:10px 0;
 }
+
 input, select {
-  padding: 8px;
-  width: 100%;
-  max-width: 300px;
-  border: 2px solid #f5a623;
-  border-radius: 5px;
-  background: #333;
-  color: #f5a623;
+  padding:8px;
+  width:100%;
+  max-width:300px;
+  background:#333;
+  color:#f5a623;
+  border:2px solid #f5a623;
+  border-radius:6px;
 }
+
 button {
-  margin-top: 15px;
-  background-color: #d97115;
-  color: #fff;
-  border: none;
-  padding: 12px 20px;
-  border-radius: 6px;
-  cursor: pointer;
-  font-weight: bold;
-  max-width: 300px;
+  margin-top:15px;
+  padding:12px;
+  background:#d97115;
+  color:white;
+  border:none;
+  border-radius:6px;
+  cursor:pointer;
+  font-weight:bold;
 }
-button:hover {
-  background-color: #f5a623;
-  color: #222;
-}
+
 #output {
-  margin-top: 20px;
-  white-space: pre-line;
-  font-size: 1.1em;
-  background: #333;
-  padding: 15px;
-  border-radius: 8px;
-  border: 1px solid #f5a623;
-  max-width: 350px;
+  margin-top:20px;
+  white-space:pre-line;
+  background:#333;
+  padding:15px;
+  border-radius:8px;
+  border:1px solid #f5a623;
 }
 </style>
 </head>
 
 <body>
 
-<h1>CAVAGNOLA MCT - By AC</h1>
+<h2>CAVAGNOLA MCT</h2>
 
-<label>Classe:</label>
+<label>Classe</label>
 <select id="classe">
   <option value="Classe1">Classe 1</option>
   <option value="Classe2">Classe 2</option>
@@ -68,16 +64,16 @@ button:hover {
   <option value="ClasseRoRo">Classe RoRo</option>
 </select>
 
-<label>Tipo:</label>
+<label>Tipo</label>
 <select id="tipo">
   <option value="cntrCR">cntr CR</option>
   <option value="prezzo">Prezzo</option>
 </select>
 
-<label>Valore:</label>
+<label>Valore</label>
 <input type="number" id="valore" />
 
-<label>Ore ritardo:</label>
+<label>Ritardo (ore)</label>
 <input type="number" id="ritardo" value="0" />
 
 <button id="calcola">Calcola</button>
@@ -86,15 +82,15 @@ button:hover {
 
 <script>
 const dati = {
-  Classe1: [
-    { min: 135, max: 144, prezzo: 3, cntrSC: 32 },
-    { min: 145, max: 154, prezzo: 7, cntrSC: 32 },
-    { min: 155, max: 164, prezzo: 11, cntrSC: 32 },
-    { min: 165, max: 174, prezzo: 20, cntrSC: 32 },
-    { min: 175, max: 184, prezzo: 23, cntrSC: 32 },
-    { min: 185, max: 194, prezzo: 27, cntrSC: 32 },
-    { min: 195, max: 204, prezzo: 35, cntrSC: 32 },
-    { min: 205, max: Infinity, prezzo: 42, cntrSC: 32 }
+  Classe1:[
+    {min:135,max:144,prezzo:3,cntrSC:32},
+    {min:145,max:154,prezzo:7,cntrSC:32},
+    {min:155,max:164,prezzo:11,cntrSC:32},
+    {min:165,max:174,prezzo:20,cntrSC:32},
+    {min:175,max:184,prezzo:23,cntrSC:32},
+    {min:185,max:194,prezzo:27,cntrSC:32},
+    {min:195,max:204,prezzo:35,cntrSC:32},
+    {min:205,max:Infinity,prezzo:42,cntrSC:32}
   ]
 };
 
@@ -102,7 +98,7 @@ document.getElementById("calcola").addEventListener("click", () => {
 
   const classe = document.getElementById("classe").value;
   const tipo = document.getElementById("tipo").value;
-  const valore = Number(document.getElementById("valore").value);
+  let valore = Number(document.getElementById("valore").value);
   const ritardo = Number(document.getElementById("ritardo").value);
   const output = document.getElementById("output");
 
@@ -117,38 +113,40 @@ document.getElementById("calcola").addEventListener("click", () => {
     return;
   }
 
-  const risultato = intervalli.find(el => valore >= el.min && valore <= el.max);
+  // 🔥 RITARDO CORRETTO: riduce il valore
+  const percentuale = ritardo > 0 ? ritardo * 10 : 0;
+  if (tipo === "cntrCR" && ritardo > 0) {
+    valore = Math.ceil(valore * (1 - percentuale / 100));
+  }
+
+  const risultato = intervalli.find(el =>
+    valore >= el.min && valore <= el.max
+  );
 
   if (!risultato) {
     output.textContent = "Fuori intervallo";
     return;
   }
 
-  const percentuale = ritardo > 0 ? ritardo * 10 : 0;
-
-  const obiettivoRitardo = Math.ceil(
-    risultato.min * (1 - percentuale / 100)
-  );
-
-  let msgRitardo =
+  const ritardoMsg =
     ritardo > 0
-      ? `Ritardo: ${ritardo}h (-${percentuale}%) → Obiettivo: ${obiettivoRitardo}`
+      ? `Ritardo: ${ritardo}h (-${percentuale}%)`
       : "Nessun ritardo";
 
   if (tipo === "cntrCR") {
 
     output.textContent =
 `Cavagnola: €${risultato.prezzo}
-Obiettivo SC: ${obiettivoRitardo}
-Contenitori SC base: ${risultato.cntrSC}
-${msgRitardo}`;
+Valore modificato: ${valore}
+Contenitori SC: ${risultato.cntrSC}
+${ritardoMsg}`;
 
   } else {
 
     output.textContent =
 `Cavagnola: €${risultato.prezzo}
 Range CR: ${risultato.min}-${risultato.max}
-${msgRitardo}`;
+${ritardoMsg}`;
   }
 
 });
