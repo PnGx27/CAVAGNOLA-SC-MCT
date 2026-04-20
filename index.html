@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>CAVAGNOLA MCT - FIX</title>
+<title>CAVAGNOLA MCT</title>
 
 <style>
 body {
@@ -73,7 +73,7 @@ button {
 <label>Valore</label>
 <input type="number" id="valore" />
 
-<label>Ritardo (ore)</label>
+<label>Ore ritardo</label>
 <input type="number" id="ritardo" value="0" />
 
 <button id="calcola">Calcola</button>
@@ -91,6 +91,16 @@ const dati = {
     {min:185,max:194,prezzo:27,cntrSC:32},
     {min:195,max:204,prezzo:35,cntrSC:32},
     {min:205,max:Infinity,prezzo:42,cntrSC:32}
+  ],
+  Classe2:[
+    {min:125,max:134,prezzo:3,cntrSC:32},
+    {min:135,max:144,prezzo:7,cntrSC:32},
+    {min:145,max:154,prezzo:11,cntrSC:32},
+    {min:155,max:164,prezzo:20,cntrSC:32},
+    {min:165,max:174,prezzo:23,cntrSC:32},
+    {min:175,max:184,prezzo:27,cntrSC:32},
+    {min:185,max:194,prezzo:35,cntrSC:32},
+    {min:195,max:Infinity,prezzo:42,cntrSC:32}
   ]
 };
 
@@ -98,25 +108,20 @@ document.getElementById("calcola").addEventListener("click", () => {
 
   const classe = document.getElementById("classe").value;
   const tipo = document.getElementById("tipo").value;
-  let valore = Number(document.getElementById("valore").value);
+  const valore = Number(document.getElementById("valore").value);
   const ritardo = Number(document.getElementById("ritardo").value);
   const output = document.getElementById("output");
 
   if (isNaN(valore)) {
-    output.textContent = "Valore non valido";
+    output.textContent = "Inserisci un valore valido";
     return;
   }
 
   const intervalli = dati[classe];
+
   if (!intervalli) {
     output.textContent = "Classe non trovata";
     return;
-  }
-
-  // 🔥 RITARDO CORRETTO: riduce il valore
-  const percentuale = ritardo > 0 ? ritardo * 10 : 0;
-  if (tipo === "cntrCR" && ritardo > 0) {
-    valore = Math.ceil(valore * (1 - percentuale / 100));
   }
 
   const risultato = intervalli.find(el =>
@@ -128,25 +133,27 @@ document.getElementById("calcola").addEventListener("click", () => {
     return;
   }
 
-  const ritardoMsg =
-    ritardo > 0
-      ? `Ritardo: ${ritardo}h (-${percentuale}%)`
-      : "Nessun ritardo";
+  const percentuale = ritardo * 10;
+
+  const obiettivo = ritardo > 0
+    ? Math.ceil(risultato.min * (1 - percentuale / 100))
+    : risultato.min;
 
   if (tipo === "cntrCR") {
 
     output.textContent =
 `Cavagnola: €${risultato.prezzo}
-Valore modificato: ${valore}
+Valore: ${valore}
+Obiettivo SC: ${obiettivo}
 Contenitori SC: ${risultato.cntrSC}
-${ritardoMsg}`;
+Ritardo: ${ritardo}h (-${percentuale}%)`;
 
   } else {
 
     output.textContent =
 `Cavagnola: €${risultato.prezzo}
-Range CR: ${risultato.min}-${risultato.max}
-${ritardoMsg}`;
+Range: ${risultato.min}-${risultato.max}
+Ritardo: ${ritardo}h (-${percentuale}%)`;
   }
 
 });
