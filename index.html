@@ -146,9 +146,7 @@ document.getElementById("calcola").addEventListener("click", () => {
   }
 
   let valoreModificato = valore;
-  if (tipo === "cntrCR" && ritardo > 0)
-
-  let obiettivoRidotto = null;
+let obiettivoRidotto = null;
 
 if (tipo === "cntrCR" && ritardo > 0) {
   const risultatoBase = intervalli.find(
@@ -158,7 +156,7 @@ if (tipo === "cntrCR" && ritardo > 0) {
   if (risultatoBase) {
     const percentuale = ritardo * 10;
     obiettivoRidotto = Math.ceil(
-      risultatoBase.cntrSC * (1 - percentuale / 100)
+      risultatoBase.min * (1 - percentuale / 100)
     );
   }
 }
@@ -182,9 +180,19 @@ output.textContent = `Cavagnola di: €${risultato.prezzo} — Contenitori SC: $
       output.textContent = "Valore fuori intervallo per cntr CR." + ritardoMsg;
     }
   } else if (tipo === "prezzo") {
-    risultato = intervalli.find((el) => valore === el.prezzo);
-    if (risultato) {
-      output.textContent = `cntr CR: da ${risultato.min} a ${risultato.max === Infinity ? 'oltre' : risultato.max} — Contenitori SC: ${risultato.cntrSC}`;
+  risultato = intervalli.find((el) => valore === el.prezzo);
+
+  if (risultato) {
+    const obiettivoFinale = obiettivoRidotto ?? risultato.min;
+
+    output.textContent =
+`Cavagnola di: €${risultato.prezzo}
+Obiettivo CR: ${obiettivoFinale}
+Contenitori SC: ${risultato.cntrSC}${ritardoMsg}`;
+  } else {
+    output.textContent = "Prezzo non trovato tra gli intervalli.";
+  }
+}
     } else {
       output.textContent = "Prezzo non trovato tra gli intervalli.";
     }
